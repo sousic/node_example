@@ -1,17 +1,27 @@
 const koa = require('koa');
 const hbs = require('koa-views-handlebars');
+const views = require('koa-views');
+const path = require('path');
 const app = new koa();
 
-//router 처리 분류
-require('./server/router_inits')(app);
-
 //handlebars confog
-app.use(hbs(__dirname, {
-    helperDirs: __dirname + '/helpers',
-    partialDirs: __dirname + '/client/views',
-    extensions:'hbs',
-    debug:true
-}));
+app.use(views(
+    path.resolve(__dirname, '../client/views'), {
+        map : {
+            hbs : 'handlebars',
+        },
+        extension : 'hbs',
+        options: {
+            partials: {
+                Head: './partials/head',
+                Header: './partials/header',
+            }
+        },
+    },
+));
+
+//router 처리 분류
+require('../server/router_inits')(app);
 
 app.listen(3000, () => {
     console.log('koa server is listening to port 3000');
