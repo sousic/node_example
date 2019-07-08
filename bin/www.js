@@ -1,24 +1,20 @@
 const koa = require('koa');
-const hbs = require('koa-views-handlebars');
+//const hbs = require('koa-views-handlebars');
+const hbs = require('koa-hbs');
 const views = require('koa-views');
 const path = require('path');
+const serve = require('koa-static');
 const app = new koa();
 
+app.use(serve('./client/'));
+
 //handlebars confog
-app.use(views(
-    path.resolve(__dirname, '../client/views'), {
-        map : {
-            hbs : 'handlebars',
-        },
-        extension : 'hbs',
-        options: {
-            partials: {
-                Head: './partials/head',
-                Header: './partials/header',
-            }
-        },
-    },
-));
+app.use(hbs.middleware({
+    viewPath:path.resolve(__dirname, '../client/views'),
+    partialsPath:path.resolve(__dirname, '../client/views/partials/'),
+    layoutsPath:path.resolve(__dirname, '../client/views/partials/'),
+    defaultLayout:'layout',
+}));
 
 //router 처리 분류
 require('../server/router_inits')(app);
